@@ -1,0 +1,10 @@
+.direnv/
+.devenv/
+.devenv.flake.nix
+
+node_modules/
+storybook-static/
+.vite/
+# Storybook crash logs
+debug-storybook.log
+.DS_Store

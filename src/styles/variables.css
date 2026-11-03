@@ -1,0 +1,595 @@
+@import "tailwindcss";
+@import "./tokens.css";
+@source "../components";
+
+/* Mirrors the Figma Color collection (Light and Dark modes) 1:1. */
+:root {
+  /* Follows the system preference, as does the dark block; no manual switch. */
+  color-scheme: light dark;
+
+  /* Primitives: one value in both schemes. Semantic tokens pick a step per
+     scheme (all but the translucent scrim); components never use a
+     primitive directly. */
+  --gravity-white: #ffffff;
+  --gravity-black: #000000;
+
+  /* Gray */
+  --gravity-gray-50: #f7f8fa;
+  --gravity-gray-100: #e8eaef;
+  --gravity-gray-200: #c6c6ca;
+  --gravity-gray-300: #a9aab0;
+  --gravity-gray-400: #8b8e97;
+  --gravity-gray-500: #6f717a;
+  --gravity-gray-600: #595b63;
+  --gravity-gray-700: #383a40;
+  --gravity-gray-800: #2c2d34;
+  --gravity-gray-900: #15161b;
+  --gravity-gray-950: #0a0a0a;
+
+  /* Blue */
+  --gravity-blue-50: #d7e3fb;
+  --gravity-blue-100: #bcd0f8;
+  --gravity-blue-200: #9ab5ee;
+  --gravity-blue-300: #6d99f9;
+  --gravity-blue-400: #4c7ee4;
+  --gravity-blue-500: #356ce2;
+  --gravity-blue-600: #1e59de;
+  --gravity-blue-700: #1845c9;
+  --gravity-blue-800: #1b34a4;
+  --gravity-blue-900: #1b2967;
+  --gravity-blue-950: #15234a;
+
+  /* Sky */
+  --gravity-sky-50: #e1f4fd;
+  --gravity-sky-100: #bbe7ff;
+  --gravity-sky-200: #91d4fa;
+  --gravity-sky-300: #69bff1;
+  --gravity-sky-400: #43a9e2;
+  --gravity-sky-500: #2291cb;
+  --gravity-sky-600: #0679b0;
+  --gravity-sky-700: #066494;
+  --gravity-sky-800: #0a5179;
+  --gravity-sky-900: #003e5a;
+  --gravity-sky-950: #012a3e;
+
+  /* Green */
+  --gravity-green-50: #e1f3ea;
+  --gravity-green-100: #b6e1cb;
+  --gravity-green-200: #96d9b5;
+  --gravity-green-300: #74ce9d;
+  --gravity-green-400: #51ba81;
+  --gravity-green-500: #2ca164;
+  --gravity-green-600: #01874c;
+  --gravity-green-700: #007442;
+  --gravity-green-800: #11633b;
+  --gravity-green-900: #1e5236;
+  --gravity-green-950: #133522;
+
+  /* Amber */
+  --gravity-amber-50: #fbeac3;
+  --gravity-amber-100: #f7d689;
+  --gravity-amber-200: #f0c35b;
+  --gravity-amber-300: #e7b131;
+  --gravity-amber-400: #d19c16;
+  --gravity-amber-500: #b78600;
+  --gravity-amber-600: #a17500;
+  --gravity-amber-700: #896509;
+  --gravity-amber-800: #715510;
+  --gravity-amber-900: #5a4616;
+  --gravity-amber-950: #382c0e;
+
+  /* Red */
+  --gravity-red-50: #fde8e8;
+  --gravity-red-100: #fac7c7;
+  --gravity-red-200: #fdabab;
+  --gravity-red-300: #fc8e8e;
+  --gravity-red-400: #f57171;
+  --gravity-red-500: #e75555;
+  --gravity-red-600: #d14343;
+  --gravity-red-700: #ab3d3e;
+  --gravity-red-800: #903a39;
+  --gravity-red-900: #6a2929;
+  --gravity-red-950: #441a1a;
+
+  /* Avatar field: a fixed OKLCH lightness gives every computed hue the same
+     perceived lightness, so white text holds one contrast ratio all round the
+     wheel (HSL would not). -deep only runs darker. field.test.ts reads these
+     and checks 4.5:1. */
+  --gravity-avatar-l: 47%;
+  --gravity-avatar-l-deep: 37%;
+  --gravity-avatar-c: 0.11;
+
+  /* Semantic */
+
+  /* Surface */
+  --gravity-surface-1: var(--gravity-white);
+  --gravity-bg-page-subtle: var(--gravity-gray-50);
+  --gravity-bg-surface-subtle: var(--gravity-gray-50);
+  --gravity-bg-surface-muted: var(--gravity-gray-100);
+  --gravity-surface-inverse: var(--gravity-gray-950);
+  /* Sheets and popovers. */
+  --gravity-surface-raised: var(--gravity-white);
+  /* The selected chip on a subtle track (SegmentedControl). */
+  --gravity-bg-surface-selected: var(--gravity-white);
+  --gravity-bg-scrim: #00000038;
+
+  /* Border */
+  --gravity-border: var(--gravity-gray-200);
+  /* The edge that identifies a control clears 3:1 on the page and panels. */
+  --gravity-border-interactive: var(--gravity-gray-400);
+  --gravity-border-subtle: var(--gravity-gray-100);
+  --gravity-border-hairline: var(--gravity-border);
+  /* Focus is interaction, so it tracks primary, never the accent. */
+  --gravity-border-focus: var(--gravity-primary-solid);
+
+  /* Text */
+  --gravity-text-primary: var(--gravity-gray-900);
+  --gravity-text-secondary: var(--gravity-gray-600);
+  --gravity-text-tertiary: var(--gravity-gray-500);
+  --gravity-text-placeholder: var(--gravity-text-tertiary);
+  --gravity-text-disabled: var(--gravity-gray-400);
+  --gravity-text-link: var(--gravity-blue-900);
+  --gravity-text-link-hover: var(--gravity-blue-950);
+  --gravity-text-on-inverse: var(--gravity-white);
+
+  /* Intent */
+  --gravity-primary-solid: var(--gravity-blue-600);
+  --gravity-primary-hover: var(--gravity-blue-700);
+  --gravity-primary-strong: var(--gravity-blue-800);
+  --gravity-primary-subtle: var(--gravity-blue-50);
+  --gravity-primary-muted: var(--gravity-blue-100);
+  --gravity-success-solid: var(--gravity-green-600);
+  --gravity-success-hover: var(--gravity-green-700);
+  --gravity-success-strong: var(--gravity-green-800);
+  --gravity-success-subtle: var(--gravity-green-50);
+  --gravity-success-muted: var(--gravity-green-100);
+  /* 500 so warning dots clear 3:1. Hover steps lighter: a darker fill would
+     drop the pressed label under 4.5:1. */
+  --gravity-warning-solid: var(--gravity-amber-500);
+  --gravity-warning-hover: var(--gravity-amber-400);
+  --gravity-warning-strong: var(--gravity-amber-800);
+  --gravity-warning-subtle: var(--gravity-amber-50);
+  --gravity-warning-muted: var(--gravity-amber-100);
+  --gravity-danger-solid: var(--gravity-red-600);
+  --gravity-danger-hover: var(--gravity-red-700);
+  --gravity-danger-strong: var(--gravity-red-800);
+  --gravity-danger-subtle: var(--gravity-red-50);
+  --gravity-danger-muted: var(--gravity-red-100);
+  --gravity-neutral-solid: var(--gravity-gray-500);
+  --gravity-neutral-hover: var(--gravity-gray-600);
+  --gravity-neutral-strong: var(--gravity-gray-700);
+  --gravity-neutral-subtle: var(--gravity-gray-100);
+  --gravity-neutral-muted: var(--gravity-gray-200);
+  --gravity-accent-solid: var(--gravity-gray-950);
+  /* Accent hovers step toward the middle grey: nothing darker than the fill would show. */
+  --gravity-accent-hover: var(--gravity-gray-800);
+  --gravity-accent-strong: var(--gravity-gray-950);
+  --gravity-accent-subtle: var(--gravity-gray-200);
+  --gravity-accent-muted: var(--gravity-gray-300);
+  /* info-solid is fill-only; text on subtle or white uses info-strong (4.5:1). */
+  --gravity-info-solid: var(--gravity-sky-600);
+  --gravity-info-strong: var(--gravity-sky-800);
+  --gravity-info-subtle: var(--gravity-sky-50);
+  --gravity-info-muted: var(--gravity-sky-100);
+
+  /* Text on intent */
+  --gravity-text-on-primary: var(--gravity-white);
+  --gravity-text-on-success: var(--gravity-white);
+  --gravity-text-on-warning: var(--gravity-gray-950);
+  --gravity-text-on-danger: var(--gravity-white);
+  --gravity-text-on-neutral: var(--gravity-white);
+  --gravity-text-on-accent: var(--gravity-white);
+
+  /* Graph selection */
+  /* Solid and muted share a hue on purpose: hover and selected differ by the pulse, not by colour. */
+  --gravity-selection-solid: var(--gravity-sky-600);
+  --gravity-selection-muted: var(--gravity-selection-solid);
+  --gravity-text-on-selection: var(--gravity-white);
+  /* The avatar field is dark in both schemes. */
+  --gravity-text-on-avatar: var(--gravity-white);
+
+  /* Upload */
+  --gravity-upload-bg: var(--gravity-bg-page-subtle);
+  --gravity-upload-border: var(--gravity-border);
+  --gravity-upload-text: var(--gravity-text-secondary);
+  --gravity-upload-active-bg: var(--gravity-bg-surface-muted);
+  --gravity-upload-active-border: var(--gravity-blue-200);
+  --gravity-upload-active-text: var(--gravity-text-primary);
+  --gravity-upload-disabled-bg: var(--gravity-bg-page-subtle);
+  --gravity-upload-disabled-border: var(--gravity-border);
+  --gravity-upload-disabled-text: var(--gravity-text-disabled);
+  --gravity-upload-error-bg: var(--gravity-danger-subtle);
+  --gravity-upload-error-border: var(--gravity-danger-solid);
+  --gravity-upload-error-text: var(--gravity-danger-strong);
+
+  /* Field: the resting fill of tinted fields. */
+  --gravity-field-tinted-bg: var(--gravity-bg-page-subtle);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Avatar field: lifted off the dark page; chroma holds, so an account
+       keeps its colour in both schemes. */
+    --gravity-avatar-l: 52%;
+    --gravity-avatar-l-deep: 42%;
+
+    /* Semantic */
+
+    /* Surface */
+    --gravity-surface-1: var(--gravity-black);
+    --gravity-bg-page-subtle: var(--gravity-gray-900);
+    --gravity-bg-surface-subtle: var(--gravity-gray-900);
+    --gravity-bg-surface-muted: var(--gravity-gray-800);
+    /* Inverts with the scheme: the code panel goes light here. */
+    --gravity-surface-inverse: var(--gravity-gray-50);
+    /* A black scrim can't dim the black page, so floating layers lift instead. */
+    --gravity-surface-raised: var(--gravity-gray-900);
+    /* One step above its gray-900 track. */
+    --gravity-bg-surface-selected: var(--gravity-gray-800);
+    --gravity-bg-scrim: #00000038;
+
+    /* Border */
+    --gravity-border: var(--gravity-gray-700);
+    --gravity-border-interactive: var(--gravity-gray-500);
+    --gravity-border-subtle: var(--gravity-gray-800);
+    --gravity-border-hairline: var(--gravity-border);
+    /* blue-400 clears 3:1 on every dark surface and on the light code panel. */
+    --gravity-border-focus: var(--gravity-blue-400);
+
+    /* Text */
+    --gravity-text-primary: var(--gravity-gray-50);
+    --gravity-text-secondary: var(--gravity-gray-300);
+    --gravity-text-tertiary: var(--gravity-gray-400);
+    --gravity-text-placeholder: var(--gravity-text-tertiary);
+    --gravity-text-disabled: var(--gravity-gray-500);
+    /* Links keep their own blue steps instead of tracking an intent. */
+    --gravity-text-link: var(--gravity-blue-400);
+    --gravity-text-link-hover: var(--gravity-blue-300);
+    --gravity-text-on-inverse: var(--gravity-gray-950);
+
+    /* Intent */
+    --gravity-primary-solid: var(--gravity-blue-600);
+    /* Primary keeps its white label here, so it darkens on hover. */
+    --gravity-primary-hover: var(--gravity-blue-700);
+    --gravity-primary-strong: var(--gravity-blue-300);
+    --gravity-primary-subtle: var(--gravity-blue-950);
+    --gravity-primary-muted: var(--gravity-blue-900);
+    --gravity-success-solid: var(--gravity-green-500);
+    --gravity-success-hover: var(--gravity-green-400);
+    --gravity-success-strong: var(--gravity-green-300);
+    --gravity-success-subtle: var(--gravity-green-950);
+    --gravity-success-muted: var(--gravity-green-900);
+    --gravity-warning-solid: var(--gravity-amber-300);
+    --gravity-warning-hover: var(--gravity-amber-200);
+    --gravity-warning-strong: var(--gravity-amber-200);
+    --gravity-warning-subtle: var(--gravity-amber-950);
+    --gravity-warning-muted: var(--gravity-amber-900);
+    --gravity-danger-solid: var(--gravity-red-500);
+    --gravity-danger-hover: var(--gravity-red-400);
+    --gravity-danger-strong: var(--gravity-red-300);
+    --gravity-danger-subtle: var(--gravity-red-950);
+    --gravity-danger-muted: var(--gravity-red-900);
+    --gravity-neutral-solid: var(--gravity-gray-400);
+    --gravity-neutral-hover: var(--gravity-gray-300);
+    /* 200, not 300: the Status glyph at its 50% pulse still clears 3:1. */
+    --gravity-neutral-strong: var(--gravity-gray-200);
+    --gravity-neutral-subtle: var(--gravity-gray-800);
+    --gravity-neutral-muted: var(--gravity-gray-700);
+    --gravity-accent-solid: var(--gravity-white);
+    --gravity-accent-hover: var(--gravity-gray-100);
+    --gravity-accent-strong: var(--gravity-gray-100);
+    --gravity-accent-subtle: var(--gravity-gray-800);
+    --gravity-accent-muted: var(--gravity-gray-700);
+    --gravity-info-solid: var(--gravity-sky-500);
+    --gravity-info-strong: var(--gravity-sky-300);
+    --gravity-info-subtle: var(--gravity-sky-950);
+    --gravity-info-muted: var(--gravity-sky-900);
+
+    /* Text on intent */
+    /* Only primary keeps a white label; the lighter fills here take gray-950. */
+    --gravity-text-on-primary: var(--gravity-white);
+    --gravity-text-on-success: var(--gravity-gray-950);
+    --gravity-text-on-warning: var(--gravity-gray-950);
+    --gravity-text-on-danger: var(--gravity-gray-950);
+    --gravity-text-on-neutral: var(--gravity-gray-950);
+    --gravity-text-on-accent: var(--gravity-gray-950);
+
+    /* Graph selection */
+    /* sky-600, not info-solid: the white label needs the darker step. */
+    --gravity-selection-solid: var(--gravity-sky-600);
+    --gravity-selection-muted: var(--gravity-selection-solid);
+    --gravity-text-on-selection: var(--gravity-white);
+    --gravity-text-on-avatar: var(--gravity-white);
+
+    /* Upload */
+    --gravity-upload-bg: var(--gravity-bg-page-subtle);
+    --gravity-upload-border: var(--gravity-gray-400);
+    --gravity-upload-text: var(--gravity-text-secondary);
+    --gravity-upload-active-bg: var(--gravity-bg-surface-muted);
+    --gravity-upload-active-border: var(--gravity-blue-800);
+    --gravity-upload-active-text: var(--gravity-text-primary);
+    --gravity-upload-disabled-bg: var(--gravity-bg-page-subtle);
+    --gravity-upload-disabled-border: var(--gravity-border);
+    --gravity-upload-disabled-text: var(--gravity-text-disabled);
+    --gravity-upload-error-bg: var(--gravity-danger-subtle);
+    --gravity-upload-error-border: var(--gravity-danger-solid);
+    --gravity-upload-error-text: var(--gravity-danger-strong);
+
+    /* Field: raised layers share page-subtle's gray-900, so tinted fields step up to stay visible on them. */
+    --gravity-field-tinted-bg: var(--gravity-gray-800);
+  }
+}
+
+@theme {
+  /* Fonts */
+  --font-display: var(--gravity-font-display);
+  --font-sans: var(--gravity-font-base);
+  --font-mono: var(--gravity-font-mono);
+
+  /* Spacing. No --spacing-none: leading-* also resolves through --spacing,
+     so that key would turn leading-none into line-height 0. */
+  --spacing-xxs: var(--gravity-space-xxs);
+  --spacing-sm: var(--gravity-space-sm);
+  --spacing-md: var(--gravity-space-md);
+  --spacing-lg: var(--gravity-space-lg);
+  --spacing-xl: var(--gravity-space-xl);
+  --spacing-2xl: var(--gravity-space-2xl);
+
+  /* Primitives */
+  --color-gray-50: var(--gravity-gray-50);
+  --color-gray-100: var(--gravity-gray-100);
+  --color-gray-200: var(--gravity-gray-200);
+  --color-gray-300: var(--gravity-gray-300);
+  --color-gray-400: var(--gravity-gray-400);
+  --color-gray-500: var(--gravity-gray-500);
+  --color-gray-600: var(--gravity-gray-600);
+  --color-gray-700: var(--gravity-gray-700);
+  --color-gray-800: var(--gravity-gray-800);
+  --color-gray-900: var(--gravity-gray-900);
+  --color-gray-950: var(--gravity-gray-950);
+
+  --color-blue-50: var(--gravity-blue-50);
+  --color-blue-100: var(--gravity-blue-100);
+  --color-blue-200: var(--gravity-blue-200);
+  --color-blue-300: var(--gravity-blue-300);
+  --color-blue-400: var(--gravity-blue-400);
+  --color-blue-500: var(--gravity-blue-500);
+  --color-blue-600: var(--gravity-blue-600);
+  --color-blue-700: var(--gravity-blue-700);
+  --color-blue-800: var(--gravity-blue-800);
+  --color-blue-900: var(--gravity-blue-900);
+  --color-blue-950: var(--gravity-blue-950);
+
+  --color-sky-50: var(--gravity-sky-50);
+  --color-sky-100: var(--gravity-sky-100);
+  --color-sky-200: var(--gravity-sky-200);
+  --color-sky-300: var(--gravity-sky-300);
+  --color-sky-400: var(--gravity-sky-400);
+  --color-sky-500: var(--gravity-sky-500);
+  --color-sky-600: var(--gravity-sky-600);
+  --color-sky-700: var(--gravity-sky-700);
+  --color-sky-800: var(--gravity-sky-800);
+  --color-sky-900: var(--gravity-sky-900);
+  --color-sky-950: var(--gravity-sky-950);
+
+  --color-green-50: var(--gravity-green-50);
+  --color-green-100: var(--gravity-green-100);
+  --color-green-200: var(--gravity-green-200);
+  --color-green-300: var(--gravity-green-300);
+  --color-green-400: var(--gravity-green-400);
+  --color-green-500: var(--gravity-green-500);
+  --color-green-600: var(--gravity-green-600);
+  --color-green-700: var(--gravity-green-700);
+  --color-green-800: var(--gravity-green-800);
+  --color-green-900: var(--gravity-green-900);
+  --color-green-950: var(--gravity-green-950);
+
+  --color-amber-50: var(--gravity-amber-50);
+  --color-amber-100: var(--gravity-amber-100);
+  --color-amber-200: var(--gravity-amber-200);
+  --color-amber-300: var(--gravity-amber-300);
+  --color-amber-400: var(--gravity-amber-400);
+  --color-amber-500: var(--gravity-amber-500);
+  --color-amber-600: var(--gravity-amber-600);
+  --color-amber-700: var(--gravity-amber-700);
+  --color-amber-800: var(--gravity-amber-800);
+  --color-amber-900: var(--gravity-amber-900);
+  --color-amber-950: var(--gravity-amber-950);
+
+  --color-red-50: var(--gravity-red-50);
+  --color-red-100: var(--gravity-red-100);
+  --color-red-200: var(--gravity-red-200);
+  --color-red-300: var(--gravity-red-300);
+  --color-red-400: var(--gravity-red-400);
+  --color-red-500: var(--gravity-red-500);
+  --color-red-600: var(--gravity-red-600);
+  --color-red-700: var(--gravity-red-700);
+  --color-red-800: var(--gravity-red-800);
+  --color-red-900: var(--gravity-red-900);
+  --color-red-950: var(--gravity-red-950);
+
+  /* Page */
+  --color-surface: var(--gravity-surface-1);
+  --color-surface-subtle: var(--gravity-bg-surface-subtle);
+  --color-surface-muted: var(--gravity-bg-surface-muted);
+  --color-page-subtle: var(--gravity-bg-page-subtle);
+  --color-surface-inverse: var(--gravity-surface-inverse);
+  --color-surface-raised: var(--gravity-surface-raised);
+  --color-surface-selected: var(--gravity-bg-surface-selected);
+  --color-scrim: var(--gravity-bg-scrim);
+
+  /* Text */
+  --color-fg: var(--gravity-text-primary);
+  --color-muted-fg: var(--gravity-text-secondary);
+  --color-subtle-fg: var(--gravity-text-tertiary);
+  --color-placeholder-fg: var(--gravity-text-placeholder);
+  --color-disabled-fg: var(--gravity-text-disabled);
+  --color-link-fg: var(--gravity-text-link);
+  --color-link-hover-fg: var(--gravity-text-link-hover);
+  --color-on-inverse: var(--gravity-text-on-inverse);
+
+  /* Intent */
+  --color-primary-solid: var(--gravity-primary-solid);
+  --color-primary-hover: var(--gravity-primary-hover);
+  --color-primary-strong: var(--gravity-primary-strong);
+  --color-primary-subtle: var(--gravity-primary-subtle);
+  --color-primary-muted: var(--gravity-primary-muted);
+  --color-on-primary: var(--gravity-text-on-primary);
+  --color-success-solid: var(--gravity-success-solid);
+  --color-success-hover: var(--gravity-success-hover);
+  --color-success-strong: var(--gravity-success-strong);
+  --color-success-subtle: var(--gravity-success-subtle);
+  --color-success-muted: var(--gravity-success-muted);
+  --color-on-success: var(--gravity-text-on-success);
+  --color-warning-solid: var(--gravity-warning-solid);
+  --color-warning-hover: var(--gravity-warning-hover);
+  --color-warning-strong: var(--gravity-warning-strong);
+  --color-warning-subtle: var(--gravity-warning-subtle);
+  --color-warning-muted: var(--gravity-warning-muted);
+  --color-on-warning: var(--gravity-text-on-warning);
+  --color-danger-solid: var(--gravity-danger-solid);
+  --color-danger-hover: var(--gravity-danger-hover);
+  --color-danger-strong: var(--gravity-danger-strong);
+  --color-danger-subtle: var(--gravity-danger-subtle);
+  --color-danger-muted: var(--gravity-danger-muted);
+  --color-on-danger: var(--gravity-text-on-danger);
+  --color-neutral-solid: var(--gravity-neutral-solid);
+  --color-neutral-hover: var(--gravity-neutral-hover);
+  --color-neutral-strong: var(--gravity-neutral-strong);
+  --color-neutral-subtle: var(--gravity-neutral-subtle);
+  --color-neutral-muted: var(--gravity-neutral-muted);
+  --color-on-neutral: var(--gravity-text-on-neutral);
+  --color-accent-solid: var(--gravity-accent-solid);
+  --color-accent-hover: var(--gravity-accent-hover);
+  --color-accent-strong: var(--gravity-accent-strong);
+  --color-accent-subtle: var(--gravity-accent-subtle);
+  --color-accent-muted: var(--gravity-accent-muted);
+  --color-on-accent: var(--gravity-text-on-accent);
+  --color-info-solid: var(--gravity-info-solid);
+  --color-info-strong: var(--gravity-info-strong);
+  --color-info-subtle: var(--gravity-info-subtle);
+  --color-info-muted: var(--gravity-info-muted);
+
+  /* Graph selection */
+  --color-selection-solid: var(--gravity-selection-solid);
+  --color-selection-muted: var(--gravity-selection-muted);
+  --color-on-selection: var(--gravity-text-on-selection);
+  --color-on-avatar: var(--gravity-text-on-avatar);
+
+  /* Border */
+  --color-border: var(--gravity-border);
+  --color-border-interactive: var(--gravity-border-interactive);
+  --color-border-subtle: var(--gravity-border-subtle);
+  --color-border-hairline: var(--gravity-border-hairline);
+  --color-border-focus: var(--gravity-border-focus);
+
+  /* Upload */
+  --color-upload: var(--gravity-upload-bg);
+  --color-upload-border: var(--gravity-upload-border);
+  --color-upload-fg: var(--gravity-upload-text);
+  --color-upload-active: var(--gravity-upload-active-bg);
+  --color-upload-active-border: var(--gravity-upload-active-border);
+  --color-upload-active-fg: var(--gravity-upload-active-text);
+  --color-upload-disabled: var(--gravity-upload-disabled-bg);
+  --color-upload-disabled-border: var(--gravity-upload-disabled-border);
+  --color-upload-disabled-fg: var(--gravity-upload-disabled-text);
+  --color-upload-error: var(--gravity-upload-error-bg);
+  --color-upload-error-border: var(--gravity-upload-error-border);
+  --color-upload-error-fg: var(--gravity-upload-error-text);
+
+  /* Field */
+  --color-field-tinted: var(--gravity-field-tinted-bg);
+
+  /* Typography: text-<role> sets the size, line height and weight. */
+  --text-display: var(--gravity-text-display-size);
+  --text-display--line-height: var(--gravity-text-display-line-height);
+  --text-display--font-weight: var(--gravity-text-display-weight);
+  --text-title-xl: var(--gravity-text-title-xl-size);
+  --text-title-xl--line-height: var(--gravity-text-title-xl-line-height);
+  --text-title-xl--font-weight: var(--gravity-text-title-xl-weight);
+  --text-title: var(--gravity-text-title-size);
+  --text-title--line-height: var(--gravity-text-title-line-height);
+  --text-title--font-weight: var(--gravity-text-title-weight);
+  --text-heading: var(--gravity-text-heading-size);
+  --text-heading--line-height: var(--gravity-text-heading-line-height);
+  --text-heading--font-weight: var(--gravity-text-heading-weight);
+  --text-subheading: var(--gravity-text-subheading-size);
+  --text-subheading--line-height: var(--gravity-text-subheading-line-height);
+  --text-subheading--font-weight: var(--gravity-text-subheading-weight);
+  --text-label: var(--gravity-text-label-size);
+  --text-label--line-height: var(--gravity-text-label-line-height);
+  --text-label--font-weight: var(--gravity-text-label-weight);
+  --text-overline: var(--gravity-text-overline-size);
+  --text-overline--line-height: var(--gravity-text-overline-line-height);
+  --text-overline--font-weight: var(--gravity-text-overline-weight);
+
+  --leading-display: var(--gravity-text-display-line-height);
+  --leading-title-xl: var(--gravity-text-title-xl-line-height);
+  --leading-title: var(--gravity-text-title-line-height);
+  --leading-heading: var(--gravity-text-heading-line-height);
+  --leading-subheading: var(--gravity-text-subheading-line-height);
+  --leading-label: var(--gravity-text-label-line-height);
+  --leading-overline: var(--gravity-text-overline-line-height);
+
+  /* --- Motion --- */
+  --animate-caret-blink: caret-blink 1.1s steps(2, start) infinite;
+
+  @keyframes caret-blink {
+    to {
+      visibility: hidden;
+    }
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    font-family: var(--font-sans);
+    font-variation-settings: normal;
+  }
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* Tailwind 4's preflight dropped the pointer cursor on buttons. */
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  /* One focus ring for every part. A part that draws its own focus sets
+     focus-visible:outline-hidden, which wins because utilities sit above
+     base and still leaves an outline for forced colours. */
+  :focus-visible {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+/* Tailwind's `transition` without `transform`, which the gravity attachment
+   writes inline every frame. */
+@utility transition-interactive {
+  transition-property:
+    color,
+    background-color,
+    border-color,
+    outline-color,
+    text-decoration-color,
+    fill,
+    stroke,
+    opacity,
+    box-shadow,
+    filter,
+    backdrop-filter,
+    translate,
+    scale,
+    rotate;
+  transition-timing-function: var(
+    --tw-ease,
+    var(--default-transition-timing-function)
+  );
+  transition-duration: var(--tw-duration, var(--default-transition-duration));
+}
