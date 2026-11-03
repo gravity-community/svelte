@@ -1,0 +1,787 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Foundations/Energy" />
+
+{/* MDX has no GFM tables without remark-gfm, so tables are JSX. */}
+
+export const token = (name) => `var(--gravity-${name})`;
+
+export const glaze = (ink) => `color-mix(in srgb, ${token(ink)} 10%, transparent)`;
+
+export const wellFill = token("bg-well");
+
+export const plate = token("bg-plate");
+
+export const plateGlaze = `color-mix(in srgb, ${token("neutral-strong")} 6%, transparent)`;
+
+export const fieldEdge = token("border-field");
+
+export const fieldEdgeInWell = `color-mix(in srgb, ${token("neutral-strong")} 22%, transparent)`;
+
+export const text = (size, weight, color) => ({ font: `${weight} ${size}px/20px ${token("font-base")}`, color: token(color) });
+
+export const glyphs = {
+  search: (
+    <>
+      <line x1="15.4142" y1="15.5" x2="21" y2="21.0858" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M11 4C14.866 4 18 7.13401 18 11C18 14.866 14.866 18 11 18C7.13401 18 4 14.866 4 11C4 7.13401 7.13401 4 11 4ZM11 6C8.23858 6 6 8.23858 6 11C6 13.7614 8.23858 16 11 16C13.7614 16 16 13.7614 16 11C16 8.23858 13.7614 6 11 6Z" fill="currentColor" />
+    </>
+  ),
+  chevron: <path d="M19 9L12 16L5 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />,
+  info: <path d="M11.0411 18.5999V9.08103H12.9395V18.5999H11.0411ZM11.9998 7.6123C11.6696 7.6123 11.386 7.50488 11.149 7.29004C10.9162 7.07108 10.7998 6.81079 10.7998 6.5092C10.7998 6.20347 10.9162 5.94319 11.149 5.72835C11.386 5.50939 11.6696 5.3999 11.9998 5.3999C12.33 5.3999 12.6114 5.50939 12.8442 5.72835C13.0813 5.94319 13.1998 6.20347 13.1998 6.5092C13.1998 6.81079 13.0813 7.07108 12.8442 7.29004C12.6114 7.50488 12.33 7.6123 11.9998 7.6123Z" fill="currentColor" />,
+};
+
+export const Glyph = ({ name, size = 14 }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="none" style={{ flexShrink: 0 }}>
+    {glyphs[name]}
+  </svg>
+);
+
+export const Figure = ({ children }) => <figure style={{ margin: "24px 0 32px" }}>{children}</figure>;
+
+export const Caption = ({ children }) => <figcaption style={{ marginTop: 8, fontSize: 14 }}>{children}</figcaption>;
+
+export const wellFills = {
+  page: [token("surface-1"), token("border-subtle")],
+  grey: [wellFill, "transparent"],
+  info: [token("info-subtle"), "transparent"],
+  // It sits in the grey card, where filled-well glazes the neutral-subtle edge.
+  bordered: ["transparent", glaze("neutral-strong")],
+};
+
+export const Well = ({ fill, label, glyph, style, children }) => (
+  <div style={{ display: "flex", flexDirection: "column", gap: 12, boxSizing: "border-box", padding: 20, borderRadius: 12, background: wellFills[fill][0], border: `1px solid ${wellFills[fill][1]}`, ...style }}>
+    {label && (
+      <span style={{ display: "flex", alignItems: "center", gap: 6, ...text(13, 500, "text-secondary") }}>
+        {glyph && <span style={{ display: "flex", color: token("info-strong") }}><Glyph name="info" size={16} /></span>}
+        {label}
+      </span>
+    )}
+    {children}
+  </div>
+);
+
+export const Panel = ({ label, children }) => (
+  <div className="sb-unstyled" aria-hidden="true" style={{ overflowX: "auto" }}>
+    <Well fill="page" label={label} style={{ padding: 24, minWidth: "min-content" }}>{children}</Well>
+  </div>
+);
+
+export const Grid = ({ columns, children }) => (
+  <div style={{ display: "grid", gridTemplateColumns: `repeat(${columns.length}, max-content)`, gap: "12px 24px", alignItems: "center", justifyItems: "start" }}>
+    {columns.map((column) => <span key={column} style={text(13, 500, "text-tertiary")}>{column}</span>)}
+    {children}
+  </div>
+);
+
+export const Row = ({ children }) => <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12 }}>{children}</div>;
+
+export const Columns = ({ min = 200, children }) => (
+  <div style={{ display: "grid", gridTemplateColumns: `repeat(auto-fit, minmax(${min}px, 1fr))`, gridAutoRows: "minmax(96px, auto)", gap: 16 }}>{children}</div>
+);
+
+export const Pair = ({ labels = ["Opaque", "Glaze"], children }) => (
+  <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: "4px 12px", alignItems: "end", justifyItems: "start" }}>
+    {labels.map((label) => <span key={label} style={text(13, 500, "text-secondary")}>{label}</span>)}
+    {children}
+  </div>
+);
+
+export const Button = ({ energy, intent = "primary", hover = false, glazed = false, pill = false, children }) => {
+  const ink = energy === "3" ? token(`text-on-${intent}`) : token(`${intent}-strong`);
+  const soft = glazed ? glaze(`${intent}-strong`) : token(`${intent}-subtle`);
+  const fill = energy === "3" ? token(`${intent}-solid`) : energy === "2" || hover ? soft : energy === "1" ? (glazed ? plateGlaze : plate) : "transparent";
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", boxSizing: "border-box", height: 36, padding: "0 12px", borderRadius: pill ? 9999 : 10, background: fill, color: ink, font: `500 14px/1 ${token("font-base")}`, whiteSpace: "nowrap" }}>
+      {children}
+    </span>
+  );
+};
+
+export const Field = ({ energy, inWell = false, pill = false, select = false, width = 200, children }) => {
+  const soft = energy === "2";
+  const edge = soft ? "transparent" : inWell ? fieldEdgeInWell : fieldEdge;
+  const ink = select ? "text-primary" : "text-secondary";
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 4, boxSizing: "border-box", width, maxWidth: "100%", height: 36, padding: "0 10px", borderRadius: pill ? 9999 : 10, border: `1px solid ${edge}`, background: soft ? wellFill : "transparent", color: token("text-primary") }}>
+      {!select && <Glyph name="search" />}
+      <span style={{ flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", ...text(14, 400, ink) }}>{children}</span>
+      {select && <Glyph name="chevron" />}
+    </span>
+  );
+};
+
+export const InfoCard = ({ energy, title, meta }) => (
+  <div style={{ display: "flex", flexDirection: "column", gap: 4, boxSizing: "border-box", width: 200, padding: 20, borderRadius: 12, border: `1px solid ${energy === "2" ? "transparent" : token("neutral-subtle")}`, background: energy === "2" ? wellFill : "transparent" }}>
+    <span style={text(14, 500, energy === "2" ? "text-primary" : "text-quiet")}>{title}</span>
+    <span style={text(13, 400, "text-secondary")}>{meta}</span>
+  </div>
+);
+
+export const IconCircle = ({ energy = "2", glazed = false, deep = false }) => {
+  const soft = deep ? `color-mix(in srgb, ${token("info-solid")} 20%, transparent)` : glazed ? glaze("info-strong") : token("info-subtle");
+  const fill = energy === "2" ? soft : energy === "1" ? (glazed ? plateGlaze : plate) : "transparent";
+  const ink = energy === "2" ? token("info-strong") : token(`info-glyph-${energy === "1" ? "faint" : "ghost"}`);
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 28, height: 28, borderRadius: 9999, background: fill, color: ink }}>
+      <Glyph name="info" />
+    </span>
+  );
+};
+
+export const Box = ({ energy, children }) => (
+  <div style={{ display: "flex", alignItems: "flex-start", gap: 12, boxSizing: "border-box", width: 280, padding: "14px 16px", borderRadius: 12, background: energy === "2" ? token("info-subtle") : energy === "1" ? plate : "transparent" }}>
+    {children}
+  </div>
+);
+
+# Energy
+
+Two props ask for attention: `intent` says what kind (the colour), `energy` says how much. Never express how much attention through `intent`. An element sits on an energy level, and the wells around it can lower it but never raise it.
+
+## Energy levels
+
+Four levels, numbered from `3`, solid, the most excited, down to `0`, ghost. Any component with an `intent` draws its levels this way.
+
+<Figure>
+  <Panel>
+    <Grid columns={["3 solid", "2 soft", "1 faint", "0 ghost", "0 ghost hover"]}>
+      <Button energy="3">Save</Button>
+      <Button energy="2">Save</Button>
+      <Button energy="1">Save</Button>
+      <Button energy="0">Save</Button>
+      <Button energy="0" hover>Save</Button>
+      <Button energy="3" intent="neutral">Save</Button>
+      <Button energy="2" intent="neutral">Save</Button>
+      <Button energy="1" intent="neutral">Save</Button>
+      <Button energy="0" intent="neutral">Save</Button>
+      <Button energy="0" intent="neutral" hover>Save</Button>
+    </Grid>
+  </Panel>
+  <Caption>`Save` at each level, primary then neutral, at rest, and ghost on hover: faint is the grey plate with the hue only in the label.</Caption>
+</Figure>
+
+<table>
+  <thead>
+    <tr>
+      <th>Level</th>
+      <th>Fill</th>
+      <th>Border</th>
+      <th>Text and icons</th>
+      <th>On hover</th>
+      <th>Disabled</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`3` solid (the most excited)</td>
+      <td>The intent's solid colour</td>
+      <td>None</td>
+      <td>Cut out of the fill in the colour of the surface underneath: white in light mode, the dark surface in dark mode. Primary in dark mode keeps white text on Gravity's blue-600</td>
+      <td>Deepens its fill</td>
+      <td>The grey disabled box</td>
+    </tr>
+    <tr>
+      <td>`2` soft</td>
+      <td>The intent's soft colour (`-subtle`)</td>
+      <td>None</td>
+      <td>The intent's colour</td>
+      <td>Deepens its fill</td>
+      <td>The grey disabled box</td>
+    </tr>
+    <tr>
+      <td>`1` faint</td>
+      <td>The grey plate (`bg-plate`)</td>
+      <td>None</td>
+      <td>The intent's colour, the only place the hue shows</td>
+      <td>Takes the soft fill: the colour arrives</td>
+      <td>The grey disabled box</td>
+    </tr>
+    <tr>
+      <td>`0` ghost</td>
+      <td>None; the component keeps its size and padding</td>
+      <td>None</td>
+      <td>The intent's colour</td>
+      <td>Takes the soft fill; faint and ghost keep it while `aria-current`, `aria-expanded="true"`, `aria-pressed="true"` or `data-state="open"` is set</td>
+      <td>Only the disabled text colour</td>
+    </tr>
+  </tbody>
+</table>
+
+- Text and icons in the intent's colour are its `-strong` ink, `neutral-strong` for neutral. A faint box that holds parts (Status, Callout, Alert, an intent card) is a filled well: it carries `filled-well`, so its parts' plates glaze to 6%.
+- Accent's hover steps toward mid grey, since it can't get deeper.
+- A held toggle also changes its glyph, label or weight, not only its fill.
+- Solid shows only at depth 0, on the page or an overlay: any filled well decays it, a grey page included, unless a `+n` shift lifts it back.
+- Every solid fill clears 4.5:1 against its cut-out.
+- Every level keeps the component's size; a level with no edge draws none, or a transparent one where the component has a border at another level.
+
+## Fields and neutral surfaces
+
+Fields, and surfaces without a colour of their own (neutral cards, ListItem's row, DataList's panel, SegmentedControl's track), draw soft and faint this way.
+
+<Figure>
+  <Panel>
+    <Grid columns={["2 soft", "1 faint"]}>
+      <Field energy="2">Search records</Field>
+      <Field energy="1">Search records</Field>
+      <InfoCard energy="2" title="Records" meta="128 entries" />
+      <InfoCard energy="1" title="Records" meta="128 entries" />
+    </Grid>
+  </Panel>
+  <Caption>A field and an InfoCard at soft, the grey well fill with no border, and at faint: a soft frame for the field, a `neutral-subtle` edge for the card, and no fill.</Caption>
+</Figure>
+
+<table>
+  <thead>
+    <tr>
+      <th>Level</th>
+      <th>Field</th>
+      <th>Neutral surface</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`2` soft</td>
+      <td>The grey well fill, a step deeper when focused; no visible border</td>
+      <td>The grey well fill (SegmentedControl's track: `neutral-subtle`)</td>
+    </tr>
+    <tr>
+      <td>`1` faint</td>
+      <td>No fill; the soft frame `border-field`, one step firmer on hover, and the 2px focus ring when focused</td>
+      <td>No fill; a 1px `neutral-subtle` edge. Hover brings in the grey well fill</td>
+    </tr>
+  </tbody>
+</table>
+
+- Invalid is the danger fill at `2` and the `danger-solid` edge at `1`. Disabled is the grey box at both.
+- Placeholders are `muted-fg` at both levels, and values stay `fg`: a field's text is the user's data.
+- InputOtp at `1` draws framed tiles, one frame per character.
+- A Checkbox is a field box: the soft fill and the faint frame, with the global focus outline and no invalid look yet. Checked, it lifts one level, as Choice's radio does: a `primary-solid` box with an `on-primary` check at `2`, the `primary-deep` tint inside a `border-focus` frame with a `primary-strong` check at `1`. Disabled, it is the plate at both levels: fainter than the soft box on the page, and a glaze that stays visible in a well.
+- RadioGroup's radio is the same control on a disc, with a 6px dot. Invalid is the danger fill at `2` and the `danger-solid` ring at `1`, and the chosen radio while invalid lifts in danger: a `danger-solid` disc at `2`, `danger-deep` in a `danger-solid` ring at `1`.
+- Intent cards (OptionCard and InfoCard with an `intent`) are soft in the intent's `-subtle` fill, hovering to `-subtle-hover`, and faint on the plate.
+- A selected card is a state mark at every level: a 2px edge in its intent's solid colour (`border-focus` for primary) over the soft fill. A neutral card selects in primary.
+- Choice selects like a field at soft: its states change only the fill (checked `primary-subtle`, invalid and refused `danger-subtle`) and its radio carries the choice. At faint, checked is the selected mark, invalid the `danger-solid` edge, and refused the 2px `danger-solid` edge over `danger-subtle`.
+
+## Shape
+
+Full rounding is the separate `shape` prop (`rounded | pill`), never an energy level. Button and the one-line fields (Input, PhoneInput, SearchInput, Select, Combobox) offer it at every level.
+
+<Figure>
+  <Panel>
+    <Grid columns={["2 rounded", "2 pill", "1 faint rounded", "1 faint pill"]}>
+      <Button energy="2">Save</Button>
+      <Button energy="2" pill>Save</Button>
+      <Button energy="1">Save</Button>
+      <Button energy="1" pill>Save</Button>
+      <Field energy="2" select width={140}>This week</Field>
+      <Field energy="2" select pill width={140}>This week</Field>
+      <Field energy="1" select width={140}>This week</Field>
+      <Field energy="1" select pill width={140}>This week</Field>
+    </Grid>
+  </Panel>
+  <Caption>`rounded` and `pill` at soft and faint: shape changes the corners, never the level.</Caption>
+</Figure>
+
+## Potential and ground
+
+Each component defines its range. Its potential is the highest level it takes: where it sits on the page, and its default. Its ground is the lowest level it takes. Left alone on the page, a component rests at its potential, and no well can take it below its ground.
+
+<table>
+  <thead>
+    <tr>
+      <th>Component</th>
+      <th>Potential (default)</th>
+      <th>Ground</th>
+      <th>Levels</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Button, IconCircle</td>
+      <td>`3` solid</td>
+      <td>`0` ghost</td>
+      <td>`3` solid, `2` soft, `1` faint, `0` ghost</td>
+    </tr>
+    <tr>
+      <td>Badge, Status, Callout, Alert, DataList, SegmentedControl</td>
+      <td>`2` soft</td>
+      <td>`0` ghost</td>
+      <td>`2` soft, `1` faint, `0` ghost</td>
+    </tr>
+    <tr>
+      <td>ListItem</td>
+      <td>`2` soft; its default is `0`, a plain row</td>
+      <td>`0` ghost</td>
+      <td>`2` soft, `1` faint, `0` ghost</td>
+    </tr>
+    <tr>
+      <td>Input, PhoneInput, SearchInput, Select, Combobox, Textarea</td>
+      <td>`2` soft</td>
+      <td>`1` faint</td>
+      <td>`2` soft, `1` faint (`0` ghost not offered yet)</td>
+    </tr>
+    <tr>
+      <td>InputOtp</td>
+      <td>`2` soft: filled tiles</td>
+      <td>`1` faint: framed tiles</td>
+      <td>`2` soft, `1` faint</td>
+    </tr>
+    <tr>
+      <td>OptionCard, InfoCard (every intent)</td>
+      <td>`2` soft: the grey well, or the intent's soft fill</td>
+      <td>`1` faint: a `neutral-subtle` edge, or the plate</td>
+      <td>`2` soft, `1` faint</td>
+    </tr>
+    <tr>
+      <td>Checkbox</td>
+      <td>`2` soft: the grey well; checked, a solid primary box</td>
+      <td>`1` faint: the soft frame; checked, a primary tint in a `border-focus` frame</td>
+      <td>`2` soft, `1` faint</td>
+    </tr>
+    <tr>
+      <td>RadioGroup</td>
+      <td>`2` soft: the grey well on a disc; checked, a solid primary disc</td>
+      <td>`1` faint: the soft frame as a ring; checked, a primary tint in a `border-focus` ring</td>
+      <td>`2` soft, `1` faint</td>
+    </tr>
+    <tr>
+      <td>Choice</td>
+      <td>`2` soft: the grey well; states change only the fill</td>
+      <td>`1` faint: a `neutral-subtle` edge; checked is the selected mark</td>
+      <td>`2` soft, `1` faint</td>
+    </tr>
+  </tbody>
+</table>
+
+- IconCircle takes `primary` too.
+- Status's ghost drops the box's padding, the one exception to ghost keeping its padding.
+- ListItem is the one component whose default isn't its potential: a list reads best as plain rows.
+- NavItem has no prop: the current page is soft primary, every other item ghost neutral.
+- Quiet built-in controls (close, back, copy, clear, reveal) are ghost neutral.
+- A text action in or just under a line of text, with no padding (a hint's "Enter manually", "Try again", "Cancel" under a form), is a `Link`, not a ghost Button: a Button always keeps its box and padding.
+
+## Setting energy
+
+`energy` takes an absolute level or a shift from the component's potential. Leave it out and the element sits at its default: its potential (ListItem: `0`), or inside a composed component the level of the slot it sits in.
+
+<table>
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th>Means</th>
+      <th>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>None</td>
+      <td>The default: the potential, or the slot's level</td>
+      <td>A Button at `3`, an Input at `2`</td>
+    </tr>
+    <tr>
+      <td>`"0"` to `"3"`</td>
+      <td>That level; one outside the component's range doesn't type-check</td>
+      <td>`energy="0"` for a quiet control</td>
+    </tr>
+    <tr>
+      <td>`"-1"`, `"-2"`, `"-3"`</td>
+      <td>That many levels below the potential; the usual way to quieten an element</td>
+      <td>`energy="-1"`: a Button at `2`, an Input at `1`</td>
+    </tr>
+    <tr>
+      <td>`"+1"`, `"+2"`, `"+3"`</td>
+      <td>That many levels above where its well puts it, never above the potential; rare</td>
+      <td>`energy={resolveEnergy("+1", ENERGY, 1)}`: a Button in a grey card back at `3`</td>
+    </tr>
+  </tbody>
+</table>
+
+- The blank page has the highest potential: at depth 0 a component reaches its potential, and each filled well lowers it by one level (see Decay).
+- A shift decays with its well like any other level and stops at the component's range, so `+1` changes nothing on the page itself.
+- Ghost reads best as `"0"`; a shift reads best for anything between the potential and the ground.
+- Components don't know their well yet (callers decay by hand), so on the prop a `+n` stops at the potential, the same as leaving `energy` out. Until the planned Card passes depth down, lift an element with `resolveEnergy("+1", range, depth)`.
+- Figma takes absolute levels only. To lift an instance the way `+1` does, give it a Depth mode one level shallower than its well.
+
+## Wells and depth
+
+A well is any region that holds content: the page, cards, Callouts, overlays, and a component's own shape, such as IconCircle's circle around its glyph or a Button's box around its label. Every well has a depth. Each grey, coloured or inverse fill sinks one level deeper than the well around it.
+
+<Figure>
+  <Panel label="Page · depth 0">
+    <Well fill="grey" label="Grey card · depth 1" style={{ maxWidth: 560 }}>
+      <Columns>
+        <Well fill="info" glyph label="Callout · depth 2" />
+        <Well fill="bordered" label="Bordered card · depth 1" />
+      </Columns>
+    </Well>
+  </Panel>
+  <Caption>A page holding a grey card, which holds an info Callout and a bordered card: each fill sinks one level, and the bordered card keeps the grey card's depth.</Caption>
+</Figure>
+
+<table>
+  <thead>
+    <tr>
+      <th>Well</th>
+      <th>Surface (Figma / code)</th>
+      <th>Depth</th>
+      <th>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>The page</td>
+      <td>`surface/1` / `bg-surface`</td>
+      <td>0</td>
+      <td>The document body: Gravity's base styles give `body` this fill</td>
+    </tr>
+    <tr>
+      <td>An overlay: sheet, popover, dialog</td>
+      <td>`surface/raised` / `bg-surface-raised`</td>
+      <td>0: a well of its own on the page, not inside the card that opened it</td>
+      <td>BottomSheet, Popover, Tooltip, GlossaryTerm's popover, and the lists of Select, Combobox and PhoneInput</td>
+    </tr>
+    <tr>
+      <td>A grey well</td>
+      <td>The grey well fill, or `bg/page-subtle`, `bg/surface-subtle`, `bg/surface-muted` / `bg-page-subtle`, `bg-surface-subtle`, `bg-surface-muted`</td>
+      <td>Parent + 1</td>
+      <td>A soft neutral InfoCard or OptionCard, a soft Choice card, and a soft DataList panel</td>
+    </tr>
+    <tr>
+      <td>A coloured well</td>
+      <td>An intent's `-subtle` fill: `<intent>/subtle` / `bg-<intent>-subtle`</td>
+      <td>Parent + 1</td>
+      <td>A soft Callout (info, warning), Alert (danger, success, info, warning) or Status, and a soft intent card</td>
+    </tr>
+    <tr>
+      <td>A faint box</td>
+      <td>The plate: `bg/plate` / `bg-plate`</td>
+      <td>Parent + 1</td>
+      <td>A faint Status, Callout or Alert, and a faint intent card</td>
+    </tr>
+    <tr>
+      <td>An inverse well</td>
+      <td>`surface/inverse` / `bg-surface-inverse`</td>
+      <td>Parent + 1, with inks and edges in the inverse colours</td>
+      <td>CodeBlock: its code, tabs and divider use `text/on-inverse` / `on-inverse`</td>
+    </tr>
+    <tr>
+      <td>A grey page</td>
+      <td>`bg/page-subtle` / `bg-page-subtle`</td>
+      <td>1</td>
+      <td>The page behind the sheet in BottomSheet's stories</td>
+    </tr>
+    <tr>
+      <td>A bordered card or a layout wrapper</td>
+      <td>None of its own (a faint neutral card draws only a `neutral-subtle` edge)</td>
+      <td>Same as its parent</td>
+      <td>A faint neutral InfoCard or OptionCard, a faint Choice card; Stack and Container</td>
+    </tr>
+  </tbody>
+</table>
+
+- Depth never decreases inward.
+
+## Decay
+
+In a well of depth N, every element sits N levels below the level it was given, default, absolute or shifted, and stops at its ground. The deeper the well, the less energy an element keeps.
+
+<Figure>
+  <Panel label="Depth 0">
+    <Row>
+      <Button energy="3">Save</Button>
+      <Field energy="2">Search records</Field>
+    </Row>
+    <Well fill="grey" label="Depth 1">
+      <Row>
+        <Button energy="2" glazed>Save</Button>
+        <Field energy="1" inWell>Search records</Field>
+      </Row>
+      <Well fill="info" label="Depth 2">
+        <Row>
+          <Button energy="1" glazed>Save</Button>
+          <Field energy="1" inWell>Search records</Field>
+        </Row>
+      </Well>
+    </Well>
+  </Panel>
+  <Caption>A `Save` Button given solid and a field given soft, at depth 0, 1 and 2; in the grey card the Button's soft is a glaze (see the next section).</Caption>
+</Figure>
+
+<table>
+  <thead>
+    <tr>
+      <th>Element (level given)</th>
+      <th>Depth 0 (page)</th>
+      <th>Depth 1 (a grey card on the page)</th>
+      <th>Depth 2 (a Callout in that card)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Button, `3` solid</td>
+      <td>`3` solid</td>
+      <td>`2` soft</td>
+      <td>`1` faint</td>
+    </tr>
+    <tr>
+      <td>Button, `1` faint</td>
+      <td>`1` faint</td>
+      <td>`0` ghost</td>
+      <td>`0` ghost (stopped at its ground)</td>
+    </tr>
+    <tr>
+      <td>Input, `2` soft (its default)</td>
+      <td>`2` soft</td>
+      <td>`1` faint</td>
+      <td>`1` faint (stopped at its ground)</td>
+    </tr>
+    <tr>
+      <td>Button, `-1`</td>
+      <td>`2` soft</td>
+      <td>`1` faint</td>
+      <td>`0` ghost</td>
+    </tr>
+    <tr>
+      <td>Button, `+1`</td>
+      <td>`3` solid (already at its potential)</td>
+      <td>`3` solid</td>
+      <td>`2` soft</td>
+    </tr>
+  </tbody>
+</table>
+
+- Decay counts from the level the element was given, which need not be its potential.
+- A component's own parts (a chip, a dot, a ring) don't decay on their own: they follow their component (see Parts). Shape never decays.
+- A popover opened from any of them is depth 0 again.
+
+## Wells glaze their contents
+
+Inside a filled well, a soft fill becomes a glaze of its own ink instead of the opaque `-subtle` fill, and the same glaze replaces the hover and held fills of faint and ghost. An opaque tint often all but vanishes on a grey or coloured well (1.00–1.14:1) and is gone on a well of the same intent; a glaze always sits a step off the well.
+
+<Figure>
+  <Panel>
+    <Columns min={320}>
+      <Well fill="grey">
+        <Pair>
+          <Button energy="2">Save</Button>
+          <Button energy="2" glazed>Save</Button>
+        </Pair>
+        <Pair>
+          <Button energy="0" intent="neutral" hover>Cancel</Button>
+          <Button energy="0" intent="neutral" hover glazed>Cancel</Button>
+        </Pair>
+        <Pair>
+          <Field energy="1" width="100%">Search records</Field>
+          <Field energy="1" inWell width="100%">Search records</Field>
+        </Pair>
+      </Well>
+      <Well fill="info">
+        <Pair>
+          <Button energy="2">Save</Button>
+          <Button energy="2" glazed>Save</Button>
+        </Pair>
+        <Pair labels={["Opaque", "Deep glaze"]}>
+          <IconCircle />
+          <IconCircle deep />
+        </Pair>
+        <Pair>
+          <Field energy="1" width="100%">Search records</Field>
+          <Field energy="1" inWell width="100%">Search records</Field>
+        </Pair>
+      </Well>
+    </Columns>
+  </Panel>
+  <Caption>In a grey well and an info well: opaque fills next to the glazes that replace them, the deep glaze of an info IconCircle on its own intent, and a faint field's frame, opaque and glazed.</Caption>
+</Figure>
+
+<table>
+  <thead>
+    <tr>
+      <th>Fill</th>
+      <th>On the page or an overlay</th>
+      <th>Inside a filled well</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`2` soft, at rest</td>
+      <td>The intent's soft colour (`-subtle`)</td>
+      <td>Its ink at 10%</td>
+    </tr>
+    <tr>
+      <td>`2` soft, on hover and press</td>
+      <td>Its deeper fill</td>
+      <td>Its ink at 15%</td>
+    </tr>
+    <tr>
+      <td>`1` faint and `0` ghost on hover, and a held faint or ghost</td>
+      <td>The soft fill</td>
+      <td>A glaze of its ink, in place of the soft fill</td>
+    </tr>
+    <tr>
+      <td>`1` faint, the plate</td>
+      <td>`neutral-strong` at 5% (12% in dark)</td>
+      <td>`neutral-strong` at 6%</td>
+    </tr>
+  </tbody>
+</table>
+
+- The grey well fill of a soft field or card glazes lighter, `neutral-strong` at 8% at rest and 10% on hover and focus, so its secondary text keeps 4.5:1. A field's faint frame glazes to 22%, and 30% on hover.
+- A nested well's own tint glazes too: a selected card in a grey card shows a 10% glaze of its ink, not its opaque `-subtle` fill.
+- A filled well applies this with the `filled-well` utility. It also turns `border-interactive` into `border-interactive-strong` so control edges keep 3:1, and points focus rings at `well-focus-ring`. A faint box carries it too.
+- On an inverse well, a ghost uses the inverse recipe: `on-inverse` ink, and a glaze of it on hover.
+
+## Text
+
+A composed component's text follows the level it shows, so a quieter component reads quieter, always at 4.5:1 or more.
+
+<table>
+  <thead>
+    <tr>
+      <th>Shown level</th>
+      <th>Title</th>
+      <th>Eyebrow</th>
+      <th>Body and meta</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`3` solid</td>
+      <td colSpan="3">Cut out of the fill (`on-<intent>`)</td>
+    </tr>
+    <tr>
+      <td>`2` soft</td>
+      <td>`fg`</td>
+      <td>`<intent>-strong`</td>
+      <td>`muted-fg`</td>
+    </tr>
+    <tr>
+      <td>`1` faint</td>
+      <td>`quiet-fg`</td>
+      <td>`<intent>-strong`</td>
+      <td>`muted-fg`</td>
+    </tr>
+    <tr>
+      <td>`0` ghost</td>
+      <td>`quiet-fg`</td>
+      <td>`<intent>-quiet` (`muted-fg` for neutral)</td>
+      <td>`muted-fg`</td>
+    </tr>
+  </tbody>
+</table>
+
+- One role changes per step: from `2` to `1` the title loses contrast, from `1` to `0` the eyebrow loses half its chroma.
+- It applies to Status, Callout, ListItem, DataList (its values take the title role), OptionCard, InfoCard and Choice.
+- Exempt: Button and Badge labels, Alert's message (it carries the intent, and a ghost danger Alert is the inline field error), field values and placeholders, and SegmentedControl's labels.
+- Plain text in a card keeps `fg` and `muted-fg`: decay already lowers what a component shows there, and its text follows.
+
+## Parts
+
+A composed component is a well whose parts match the level it shows. Its definition gives a part a level of its own only where the part would steal attention from the whole; the well around the component lowers all of it together.
+
+<Figure>
+  <Panel>
+    <Grid columns={["2 soft", "1 faint", "0 ghost"]}>
+      <Box energy="2"><IconCircle energy="2" deep /><Button energy="2" glazed>Retry</Button></Box>
+      <Box energy="1"><IconCircle energy="1" glazed /><Button energy="1" glazed>Retry</Button></Box>
+      <Box energy="0"><IconCircle energy="0" /><Button energy="0">Retry</Button></Box>
+    </Grid>
+  </Panel>
+  <Caption>An info box at each level with its icon and action matching it: at soft the icon takes the deep glaze of its own intent and the action the well's glaze; at faint and ghost the glyph steps quieter.</Caption>
+</Figure>
+
+<table>
+  <thead>
+    <tr>
+      <th>Component</th>
+      <th>Part</th>
+      <th>Level</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Status</td><td>IconCircle, main action</td><td>Matches</td></tr>
+    <tr><td>Status</td><td>Second action</td><td>Ghost neutral</td></tr>
+    <tr><td>Callout, Alert</td><td>Icon</td><td>A bare glyph whose ink follows the level</td></tr>
+    <tr><td>Callout</td><td>Actions</td><td>Match</td></tr>
+    <tr><td>Alert</td><td>Close</td><td>Ghost neutral</td></tr>
+    <tr><td>ListItem</td><td>Leading IconCircle, Badge</td><td>Match</td></tr>
+    <tr><td>ListItem</td><td>Trailing actions</td><td>One level lower</td></tr>
+    <tr><td>DataList</td><td>Copy</td><td>Ghost neutral</td></tr>
+    <tr><td>OptionCard, InfoCard</td><td>Chip</td><td>Matches; OptionCard's one level higher while selected</td></tr>
+    <tr><td>Choice</td><td>Radio</td><td>Matches; one level higher while checked; an empty radio stays `neutral-deep` at faint</td></tr>
+  </tbody>
+</table>
+
+- In code, a part given no `energy` takes its slot's level, a shift still counts from the potential, and an absolute level ignores it. Don't decay a part by hand inside a composed component: it already follows its container.
+- Soft on soft: a soft part on a fill of its own intent uses the deep glaze, 20% of the intent's solid colour (`neutral-solid` for neutral; a soft Button 15%, hovering to 20%). A part of another intent keeps the well's 10% glaze.
+- A part never gets louder at a lower level. At faint and ghost, an IconCircle's or chip's glyph, and Callout's and Alert's icon, step to quieter shades of the intent (`<intent>-glyph-faint`, `<intent>-glyph-ghost`), one per intent and level, that never fall under 3:1 and, wherever 3:1 allows, stay at or under the level above. Labels keep the intent's `-strong` ink.
+- Neutral has no primary decoration: a neutral card has a neutral chip, and primary appears only for state (checked, selected, active, current, done).
+
+## Today and planned
+
+Callers apply decay by hand today: `resolveEnergy(energy, range, depth)` returns the level an element shows in a well `depth` levels deep. Composed components already pass their level to their parts. A planned Card component will apply decay for everything else.
+
+<table>
+  <thead>
+    <tr>
+      <th>What</th>
+      <th>Status</th>
+      <th>Detail</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Decay by hand</td>
+      <td>Today</td>
+      <td>Callers lower each element's level by its well's depth themselves, stopping at its ground</td>
+    </tr>
+    <tr>
+      <td>Parts</td>
+      <td>Today</td>
+      <td>Composed components pass the level they show to their parts, with the predefined levels above</td>
+    </tr>
+    <tr>
+      <td>Card</td>
+      <td>Planned</td>
+      <td>A Card component that applies decay automatically to what it holds</td>
+    </tr>
+    <tr>
+      <td>Wells on Card</td>
+      <td>Planned</td>
+      <td>Callout, Alert, Status's box, InfoCard, OptionCard and the DataList panel, rebuilt on Card so they apply decay automatically too</td>
+    </tr>
+  </tbody>
+</table>
+
+## Order
+
+Energy levels always run highest first, as one sequence: `3` solid, `2` soft, `1` faint, `0` ghost.
+
+<table>
+  <thead>
+    <tr>
+      <th>Where</th>
+      <th>Order</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Figma: property options and canvas</td>
+      <td>`3` solid, `2` soft, `1` faint, `0` ghost</td>
+    </tr>
+    <tr>
+      <td>Storybook: `argTypes` controls and `Matrix` axes</td>
+      <td>`3` solid, `2` soft, `1` faint, `0` ghost</td>
+    </tr>
+    <tr>
+      <td>Code: `as const` arrays and `tv` variants</td>
+      <td>`3` solid, `2` soft, `1` faint, `0` ghost</td>
+    </tr>
+  </tbody>
+</table>
+
+- No grouping: a component with fewer levels keeps the same order.
+
+## Rollout
+
+Rollout in progress. Level 1 is now faint, replacing the bordered look; code, Storybook and the Gravity Figma masters move together, then the apps. The Certifix Figma file shows the changes once it accepts the next Gravity publish, and still uses the `pill (deprecated)` field variants until its own migration lands. Don't add new uses of the old names or of the bordered level 1.

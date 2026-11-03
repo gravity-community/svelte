@@ -1,0 +1,75 @@
+{
+  "name": "@gravity-community/svelte",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "Gravity UI Kit for Svelte 5",
+  "keywords": ["svelte", "svelte5", "sveltekit", "components", "design-system"],
+  // Consumers build from this file and src/ alone.
+  "exports": {
+    ".": "./src/mod.ts",
+    "./initials": "./src/utils/initials.ts",
+    "./phone": "./src/components/phone-input/countries.ts",
+    "./phone-input": "./src/phone-input.ts",
+    "./styles/variables.css": "./src/styles/variables.css",
+    "./vite": "./src/vite.ts"
+  },
+  "nodeModulesDir": "auto",
+  "unstable": ["fmt-component"],
+  "tasks": {
+    "storybook": "deno run -A npm:storybook dev -p 6006",
+    "storybook:build": "deno run -A npm:storybook build",
+    "check": "deno check src/mod.ts src/phone-input.ts src/vite.ts && deno run -A npm:svelte-check --tsconfig ./tsconfig.json --threshold error",
+    "test": "deno test --allow-read src && deno run -A npm:vitest run"
+  },
+  "test": {
+    // *.svelte.test.ts files run under vitest.
+    "exclude": ["src/**/*.svelte.test.ts"]
+  },
+  "fmt": {
+    "proseWrap": "preserve",
+    "exclude": ["storybook-static"]
+  },
+  "lint": {
+    "rules": {
+      "tags": ["recommended"]
+    },
+    "exclude": ["storybook-static"]
+  },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@1",
+    "@std/fs": "jsr:@std/fs@1",
+    "@storybook/addon-docs": "npm:@storybook/addon-docs@^10.0.0",
+    "@storybook/addon-svelte-csf": "npm:@storybook/addon-svelte-csf@^5.0.0",
+    "@storybook/svelte": "npm:@storybook/svelte@^10.0.0",
+    "@storybook/svelte-vite": "npm:@storybook/svelte-vite@^10.0.0",
+    "@sveltejs/vite-plugin-svelte": "npm:@sveltejs/vite-plugin-svelte@^5.0.0",
+    "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.0.17",
+    "@testing-library/jest-dom": "npm:@testing-library/jest-dom@^6.6.3",
+    "@testing-library/svelte": "npm:@testing-library/svelte@^5.2.7",
+    "@testing-library/user-event": "npm:@testing-library/user-event@^14.6.8",
+    "@maskito/core": "npm:@maskito/core@^5.6.1",
+    "@use-gesture/vanilla": "npm:@use-gesture/vanilla@^10.3.1",
+    "bits-ui": "npm:bits-ui@^2.20.3",
+    "clsx": "npm:clsx@^2.1.1",
+    "country-flag-icons": "npm:country-flag-icons@^1.6.20",
+    "focus-trap": "npm:focus-trap@^8.2.2",
+    "jsdom": "npm:jsdom@^26.0.0",
+    "libphonenumber-js": "npm:libphonenumber-js@^1.12.0",
+    "motion": "npm:motion@^12",
+    "runed": "npm:runed@^0.37.1",
+    "storybook": "npm:storybook@^10.0.0",
+    "svelte": "npm:svelte@^5.56.4",
+    "svelte-check": "npm:svelte-check@^4.7.6",
+    "tailwind-merge": "npm:tailwind-merge@^3.7.0",
+    "tailwind-variants": "npm:tailwind-variants@^3.3.1",
+    "tailwindcss": "npm:tailwindcss@^4.0.17",
+    "vite": "npm:vite@^6.2.3",
+    "vitest": "npm:vitest@^3.0.9"
+  },
+  "compilerOptions": {
+    "types": ["svelte"],
+    "lib": ["deno.ns", "DOM"],
+    "strict": true,
+    "skipLibCheck": true
+  }
+}

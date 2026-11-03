@@ -1,0 +1,67 @@
+@import "./fonts.css";
+
+:root {
+  /* Font families */
+  --gravity-font-display: "Rubik", sans-serif;
+  --gravity-font-base: "Inter", sans-serif;
+  --gravity-font-mono: "Overpass Mono", monospace;
+
+  /* Font weights */
+  --gravity-font-weight-regular: 400;
+  --gravity-font-weight-medium: 500;
+  --gravity-font-weight-semibold: 600;
+
+  /* Typography */
+  --gravity-text-display-font: var(--gravity-font-display);
+  --gravity-text-display-size: 32px;
+  --gravity-text-display-line-height: 40px;
+  --gravity-text-display-weight: 600;
+
+  --gravity-text-title-xl-font: var(--gravity-font-base);
+  --gravity-text-title-xl-size: 32px;
+  --gravity-text-title-xl-line-height: 40px;
+  --gravity-text-title-xl-weight: 700;
+
+  --gravity-text-title-font: var(--gravity-font-base);
+  --gravity-text-title-size: 24px;
+  --gravity-text-title-line-height: 32px;
+  --gravity-text-title-weight: 600;
+
+  --gravity-text-heading-font: var(--gravity-font-base);
+  --gravity-text-heading-size: 20px;
+  --gravity-text-heading-line-height: 28px;
+  --gravity-text-heading-weight: 600;
+
+  --gravity-text-subheading-font: var(--gravity-font-base);
+  --gravity-text-subheading-size: 18px;
+  --gravity-text-subheading-line-height: 24px;
+  --gravity-text-subheading-weight: 500;
+
+  --gravity-text-label-font: var(--gravity-font-base);
+  --gravity-text-label-size: 16px;
+  --gravity-text-label-line-height: 24px;
+  --gravity-text-label-weight: 500;
+
+  --gravity-text-overline-font: var(--gravity-font-base);
+  --gravity-text-overline-size: 14px;
+  --gravity-text-overline-line-height: 20px;
+  --gravity-text-overline-weight: 600;
+
+  /* Font sizes */
+  --gravity-font-size-sm: 14px;
+  --gravity-font-size-base: 16px;
+  --gravity-font-size-lg: 18px;
+
+  /* Spacing */
+  --gravity-space-none: 0px;
+  --gravity-space-xxs: 4px;
+  --gravity-space-sm: 8px;
+  --gravity-space-md: 12px;
+  --gravity-space-lg: 16px;
+  --gravity-space-xl: 24px;
+  --gravity-space-2xl: 32px;
+
+  /* Opacity */
+  --gravity-opacity-100: 1;
+  --gravity-opacity-80: 0.8;
+}

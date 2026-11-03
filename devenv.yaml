@@ -1,0 +1,4 @@
+inputs:
+  # nixos-25.11 carries Deno 2.6; the project and the apps that link it run 2.9.
+  nixpkgs:
+    url: github:NixOS/nixpkgs/nixpkgs-unstable

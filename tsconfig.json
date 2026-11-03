@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "types": [],
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@gravity-community/svelte": [
+        "./src/mod.ts"
+      ],
+      "@gravity-community/svelte/phone": [
+        "./src/components/phone-input/countries.ts"
+      ],
+      "@gravity-community/svelte/phone-input": [
+        "./src/phone-input.ts"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*.svelte",
+    "src/**/*.svelte.ts",
+    "src/**/*.svelte.test.ts",
+    "vitest-setup-client.ts"
+  ]
+}
